@@ -1,95 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace VehicleSystem
+namespace UIProject
 {
-    public interface IRefuelable
+    public class UIWindow
     {
-        void Refill();
-    }
+        public string Title { get; set; }
 
-    public abstract class Vehicle
-    {
-        public string Brand { get; set; }
-        public int Speed { get; set; }
-
-        protected Vehicle(string brand, int speed)
+        public UIWindow(string title)
         {
-            Brand = brand;
-            Speed = speed;
+            Title = title;
         }
 
-        public abstract void Move();
-    }
-
-    public class Car : Vehicle, IRefuelable
-    {
-        public Car(string brand, int speed) : base(brand, speed) { }
-
-        public override void Move()
+        public virtual void Draw()
         {
-            Console.WriteLine($"The car {Brand} is driving on the road at a speed of {Speed} km/h.");
-        }
-
-        public void Refill()
-        {
-            Console.WriteLine($"The car {Brand} has been refueled with gasoline.");
+            Console.WriteLine($"[UIWindow]: Rendering base window '{Title}'");
         }
     }
 
-    public class Bicycle : Vehicle
+    public class MainWindow : UIWindow
     {
-        public Bicycle(string brand, int speed) : base(brand, speed) { }
+        public MainWindow(string title) : base(title) { }
 
-        public override void Move()
+        public override void Draw()
         {
-            Console.WriteLine($"The bicycle {Brand} is rolling along the path at a speed of {Speed} km/h.");
+            Console.WriteLine($"[MainWindow]: Displaying main menu and toolbar for '{Title}'");
         }
     }
 
-    public class Airplane : Vehicle, IRefuelable
+    public class ModalWindow : UIWindow
     {
-        public Airplane(string brand, int speed) : base(brand, speed) { }
+        public ModalWindow(string title) : base(title) { }
 
-        public override void Move()
+        public override void Draw()
         {
-            Console.WriteLine($"The airplane {Brand} is flying in the sky at a speed of {Speed} km/h.");
+            Console.WriteLine($"[ModalWindow]: Blocking background and showing window '{Title}' on top of all others.");
         }
+    }
 
-        public void Refill()
+    public class Dialog : UIWindow
+    {
+        public Dialog(string title) : base(title) { }
+
+        public override void Draw()
         {
-            Console.WriteLine($"The airplane {Brand} has been refueled with aviation fuel.");
+            Console.WriteLine($"[Dialog]: Displaying 'Yes/No' buttons in the '{Title}' window");
         }
     }
 
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            List<Vehicle> vehicles = new List<Vehicle>
+            List<UIWindow> windows = new List<UIWindow>
             {
-                new Car("RAM", 120),
-                new Bicycle("Giant", 25),
-                new Airplane("Boeing", 900)
+                new MainWindow("Workspace"),
+                new ModalWindow("Warning"),
+                new Dialog("Exit Confirmation")
             };
 
-            Console.WriteLine("--- Executing Move() method ---");
-            foreach (var vehicle in vehicles)
+            foreach (var win in windows)
             {
-                vehicle.Move();
-            }
-
-            Console.WriteLine("--- Interface check (Refueling) ---");
-            foreach (var vehicle in vehicles)
-            {
-                if (vehicle is IRefuelable refuelableVehicle)
-                {
-                    refuelableVehicle.Refill();
-                }
-                else
-                {
-                    Console.WriteLine($"{vehicle.Brand} does not require fuel (it is a bicycle).");
-                }
+                win.Draw();
             }
         }
     }
